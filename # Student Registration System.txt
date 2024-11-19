@@ -1,0 +1,24 @@
+# Student Registration System
+
+## Overview
+This is a simple student registration system built with HTML, CSS, and JavaScript. It allows users to add, edit, and delete student records, with data persisted in the browser's local storage.
+
+## Features
+- Add and update student records.
+- Validate input fields for data integrity.
+- Save and load data using local storage.
+- Dynamic scrolling for large lists of student records.
+
+## File Structure
+- `index.html` - Main HTML file.
+- `css/styles.css` - CSS styling.
+- `js/scripts.js` - JavaScript logic for data handling.
+  
+## Setup
+1. Open `index.html` in a browser to use the application.
+2. Make sure JavaScript is enabled in your browser.
+
+## Usage
+- Fill out the form and click "Add/Update Student" to save a new record or update an existing one.
+- Use "Edit" and "Delete" buttons to modify or remove records.
+- Records are saved in the local storage and persist across page reloads.

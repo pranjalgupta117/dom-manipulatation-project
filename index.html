@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <h1>"Student Registration System."</h1>
+    <p>This is a student registration system where students can register their details such as name,
+        class, address, and contact number.It has functionalities for editing and
+        deleting records.</p>
+        <form action="/submit-form" method="post">
+    
+            <label for="name">Student Name:</label><br>
+            <input type="text" id="name" name="name" required><br><br>
+            
+            <label for="student-id">Student ID:</label><br>
+            <input type="text" id="student-id" name="student-id" required><br><br>
+            
+            <label for="email">Email ID:</label><br>
+            <input type="email" id="email" name="email" required><br><br>
+            
+            <label for="contact">Contact No.:</label><br>
+            <input type="tel" id="contact" name="contact" required><br><br>
+            
+            <input type="submit" value="Submit">
+            <br>
+            <br>
+          
+          </form>
+          <br>
+          <h2>Registered student records</h2>
+          <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Student Name</th>
+                <th>Student ID</th>
+                <th>Email ID</th>
+                <th>Contact No.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>John Doe</td>
+                <td>123456</td>
+                <td>johndoe@example.com</td>
+                <td>+1234567890</td>
+              </tr>
+              <tr>
+                <td>Jane Smith</td>
+                <td>789012</td>
+                <td>janesmith@example.com</td>
+                <td>+0987654321</td>
+              </tr>
+              <!-- Add more student records as needed -->
+            </tbody>
+          </table>
+         
+        
+          <script>
+            function registerStudent() {
+              // Get form values
+              const name = document.getElementById("name").value;
+              const studentId = document.getElementById("student-id").value;
+              const email = document.getElementById("email").value;
+              const contact = document.getElementById("contact").value;
+        
+              // Create a new row in the table
+              const table = document.getElementById("studentsTable");
+              const newRow = table.insertRow();
+              newRow.insertCell(0).innerText = name;
+              newRow.insertCell(1).innerText = studentId;
+              newRow.insertCell(2).innerText = email;
+              newRow.insertCell(3).innerText = contact;
+        
+              // Clear form fields after submission
+              document.getElementById("registrationForm").reset();
+            }
+          </script>
+          <script>
+            // Helper functions to manage local storage
+            function getStoredStudents() {
+              return JSON.parse(localStorage.getItem('students')) || [];
+            }
+        
+            function saveStudents(students) {
+              localStorage.setItem('students', JSON.stringify(students));
+            }
+        
+            // Validation helper function
+            function validateInput(name, studentId, email, contact) {
+              const nameRegex = /^[A-Za-z\s]+$/;
+              const idRegex = /^[0-9]+$/;
+              const contactRegex = /^[0-9]+$/;
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+              return (
+                nameRegex.test(name) &&
+                idRegex.test(studentId) &&
+                emailRegex.test(email) &&
+                contactRegex.test(contact)
+              );
+            }
+        
+            // Display stored students on page load
+            window.onload = function() {
+              loadStudents();
+            };
+        
+            // Add or update student function
+            function addOrUpdateStudent() {
+              const name = document.getElementById('name').value.trim();
+              const studentId = document.getElementById('student-id').value.trim();
+              const email = document.getElementById('email').value.trim();
+              const contact = document.getElementById('contact').value.trim();
+        
+              if (!validateInput(name, studentId, email, contact)) {
+                alert('Please enter valid input values.');
+                return;
+              }
+        
+              let students = getStoredStudents();
+              const existingIndex = students.findIndex(student => student.studentId === studentId);
+        
+              if (existingIndex > -1) {
+                // Update existing student
+                students[existingIndex] = { name, studentId, email, contact };
+              } else {
+                // Add new student
+                students.push({ name, studentId, email, contact });
+              }
+        
+              saveStudents(students);
+              loadStudents();
+              document.getElementById('registrationForm').reset();
+            }
+        
+            // Load students into the table
+            function loadStudents() {
+              const students = getStoredStudents();
+              const tableBody = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+              tableBody.innerHTML = ''; // Clear existing rows
+        
+              students.forEach((student, index) => {
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = student.name;
+                row.insertCell(1).textContent = student.studentId;
+                row.insertCell(2).textContent = student.email;
+                row.insertCell(3).textContent = student.contact;
+        
+                // Action buttons
+                const actionsCell = row.insertCell(4);
+                const editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = () => editStudent(index);
+        
+                const deleteButton = document.createElement('button');
+                deleteButton.textContent = 'Delete';
+                deleteButton.onclick = () => deleteStudent(index);
+        
+                actionsCell.appendChild(editButton);
+                actionsCell.appendChild(deleteButton);
+              });
+            }
+        
+            // Edit student function
+            function editStudent(index) {
+              const students = getStoredStudents();
+              const student = students[index];
+        
+              document.getElementById('name').value = student.name;
+              document.getElementById('student-id').value = student.studentId;
+              document.getElementById('email').value = student.email;
+              document.getElementById('contact').value = student.contact;
+            }
+        
+            // Delete student function
+            function deleteStudent(index) {
+              let students = getStoredStudents();
+              students.splice(index, 1);
+              saveStudents(students);
+              loadStudents();
+            }
+          </script>
+          <script>
+          //Function to retrieve student records from local storage
+          function getStoredStudents() {
+            return JSON.parse(localStorage.getItem('students')) || [];
+          }
+          
+          // Function to save student records to local storage
+          function saveStudents(students) {
+            localStorage.setItem('students', JSON.stringify(students));
+          }
+          
+          // Function to validate input fields
+          function validateInput(name, studentId, email, contact) {
+            const nameRegex = /^[A-Za-z\s]+$/;
+            const idRegex = /^[0-9]+$/;
+            const contactRegex = /^[0-9]+$/;
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          
+            // Return true only if all fields are valid
+            return (
+              nameRegex.test(name) &&
+              idRegex.test(studentId) &&
+              emailRegex.test(email) &&
+              contactRegex.test(contact)
+            );
+          }
+          
+          // Load students from local storage on page load
+          window.onload = function() {
+            loadStudents();
+          };
+          
+          // Function to add or update a student record
+          function addOrUpdateStudent() {
+            // Get input values
+            const name = document.getElementById('name').value.trim();
+            const studentId = document.getElementById('student-id').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+          
+            // Validate inputs
+            if (!validateInput(name, studentId, email, contact)) {
+              alert('Please enter valid input values.');
+              return;
+            }
+          
+            let students = getStoredStudents();
+            const existingIndex = students.findIndex(student => student.studentId === studentId);
+          
+            // If student already exists, update their record; otherwise, add new record
+            if (existingIndex > -1) {
+              students[existingIndex] = { name, studentId, email, contact };
+            } else {
+              students.push({ name, studentId, email, contact });
+            }
+          
+            saveStudents(students);
+            loadStudents();  // Refresh table display
+            document.getElementById('registrationForm').reset();  // Clear form
+          }
+          
+          // Function to load student records into the table
+          function loadStudents() {
+            const students = getStoredStudents();
+            const tableBody = document.getElementById('studentsTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = ''; // Clear previous rows
+          
+            students.forEach((student, index) => {
+              const row = tableBody.insertRow();
+              row.insertCell(0).textContent = student.name;
+              row.insertCell(1).textContent = student.studentId;
+              row.insertCell(2).textContent = student.email;
+              row.insertCell(3).textContent = student.contact;
+          
+              // Action buttons for edit and delete
+              const actionsCell = row.insertCell(4);
+              const editButton = document.createElement('button');
+              editButton.textContent = 'Edit';
+              editButton.onclick = () => editStudent(index);
+          
+              const deleteButton = document.createElement('button');
+              deleteButton.textContent = 'Delete';
+              deleteButton.onclick = () => deleteStudent(index);
+          
+              actionsCell.appendChild(editButton);
+              actionsCell.appendChild(deleteButton);
+            });
+          }
+          
+          // Function to edit a student's record by loading their data into the form
+          function editStudent(index) {
+            const students = getStoredStudents();
+            const student = students[index];
+          
+            document.getElementById('name').value = student.name;
+            document.getElementById('student-id').value = student.studentId;
+            document.getElementById('email').value = student.email;
+            document.getElementById('contact').value = student.contact;
+          }
+          
+          // Function to delete a student record
+          function deleteStudent(index) {
+            let students = getStoredStudents();
+            students.splice(index, 1);  // Remove student at specified index
+            saveStudents(students);
+            loadStudents();  // Refresh table display
+          }
+          
+        </script>
+</body>
+</html>
